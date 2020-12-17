@@ -287,7 +287,7 @@ def get_next_continuation(chat_replay_json):
 ###
 
 def get_youtube_chat_replay() :
-	video_id = "34eGN747bw0"
+	video_id = "tM4I4_ZvYCE"
 	dir_path_output = "./output"
 	dir_path_video_id = f"{dir_path_output}/{video_id}"
 	dir_path_chat_replay_continuation = f"{dir_path_video_id}/chat_replay_continuation"
