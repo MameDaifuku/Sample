@@ -4,21 +4,21 @@
 
 前準備
 ===
-①
+①  
 get_youtube_chat_replayでダウンロードしてきたチャットデータを使って処理するので、
 get_youtube_chat_replayも同じ階層cloneして処理を蹴っておく必要があります。
 書いてあるパスとかを見てよろしくやってください。
 
-②
+②  
 resourceフォルダの中身は適当に自分でメンテしてください。
 
-③
+③  
 MeCabをインストールするときは「pip3 install mecab-python3==0.996.5」
 cv2をインストールするときは「pip3 install opencv-python」
 
 参考
 ===
-MeCabをインストールできない 　
+MeCabをインストールできない  
 https://teratail.com/questions/174878
 
 【python】opencv-pythonがインストールできない時の備忘録  
