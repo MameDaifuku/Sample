@@ -13,8 +13,8 @@ get_youtube_chat_replayも同じ階層cloneして処理を蹴っておく必要�
 resourceフォルダの中身は適当に自分でメンテしてください。
 
 ③  
-MeCabをインストールするときは「pip3 install mecab-python3==0.996.5」
-cv2をインストールするときは「pip3 install opencv-python」
+MeCabをインストールするときは「pip3 install mecab-python3==0.996.5」  
+cv2をインストールするときは「pip3 install opencv-python」  
 
 参考
 ===
