@@ -98,13 +98,14 @@ def get_rate_limit_status() :
 def get_search_result() :
 	twitter = get_twitter()
 	url = "https://api.twitter.com/1.1/search/tweets.json" 
-	query_word = "グラブル"
+	query_word = "グラブル "
 	query_from = f"from:{config.twitter_screen_name} "
 	query_since = "since:2020-11-01 "
 	query_until = "until:2020-12-31 "
 	query_filter = "-filter:retweets " 
 	query_combined = ""
 	query_combined += query_word
+	query_combined += "OR @toooooooooooooooooos"
 # 	query_combined += query_from
 # 	query_combined += query_since
 # 	query_combined += query_until
