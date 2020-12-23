@@ -50,3 +50,6 @@ https://teratail.com/questions/256341
 
 Twitter API 1.1 / 実行回数制限  
 https://gist.github.com/tsupo/5597066
+
+Standard API rate limits per window
+https://developer.twitter.com/ja/docs/basics/rate-limits
