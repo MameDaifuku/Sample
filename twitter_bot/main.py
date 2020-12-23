@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
 
+import os
 from pprint import pprint
 import time
 import datetime
 import json, config #標準のjsonモジュールとconfig.pyの読み込み
 from requests_oauthlib import OAuth1Session #OAuthのライブラリの読み込み
+
+def default_method(item):
+	if isinstance(item, object) and hasattr(item, '__dict__'):
+		return item.__dict__
+	else:
+		raise TypeError
+	###
+###
 
 def get_twitter() :
 	return OAuth1Session(
@@ -96,9 +105,9 @@ def get_search_result() :
 	query_filter = "-filter:retweets " 
 	query_combined = ""
 	query_combined += query_word
-	query_combined += query_from
-	query_combined += query_since
-	query_combined += query_until
+# 	query_combined += query_from
+# 	query_combined += query_since
+# 	query_combined += query_until
 	query_combined += query_filter
 	params = {
 		"q" : query_combined,
@@ -108,15 +117,37 @@ def get_search_result() :
 	
 	res = twitter.get(url, params = params)
 	if res.status_code == 200: 
+		max_id = 0
+		min_id = 99999999999999999999
+		result = []
 		res_json = json.loads(res.text)
 		for tweet in res_json["statuses"]:
 # 			pprint(tweet)
-			print(tweet["created_at"])
-			print(tweet["id"])
-			print(tweet["user"]["name"])
-			print(tweet["text"])
-			print('*******************************************')
+# 			print(tweet["created_at"])
+# 			print(tweet["id"])
+# 			print(tweet["user"]["name"])
+# 			print(tweet["text"])
+# 			print('*******************************************')
+
+			# result_typeがrecentなら結果が降順で返ってくるので最初と最後の値を取れば済む
+			if max_id < tweet["id"] : max_id = tweet["id"]
+			if min_id > tweet["id"] : min_id = tweet["id"]
+			
+			temp = {}
+			temp["created_at"] = tweet["created_at"]
+			temp["id"] = tweet["id"]
+			temp["screen_name"] = tweet["user"]["name"]
+			temp["text"] = tweet["text"]
+			result.append(temp)
 		###
+		
+		file_path = f"{dir_path_output}/{min_id}_{max_id}.json"
+		with open(file_path, mode="w", encoding="utf-8_sig") as f:
+			f.write(json.dumps(result, default=default_method, ensure_ascii=False, indent=4))
+			###
+		###
+		
+		print(json.dumps(result, default=default_method, ensure_ascii=False, indent=4))
 	else: 
 		print("Failed: %d" % res.status_code)
 	###
@@ -195,11 +226,11 @@ def post_direct_messages(method) :
 
 ####################################################
 def run():
-	post_tweet("", "") #通常のツイート
+# 	post_tweet("", "") #通常のツイート
 # 	post_tweet(config.twitter_status_id, config.twitter_screen_name) # 特定のツイートに対するリプライ
 # 	get_timeline() #タイムライン取得
 # 	get_rate_limit_status() #APIの利用上限に関する情報の取得
-# 	get_search_result() #検索実行
+	get_search_result() #検索実行
 # 	post_favorite("create") # いいね実行（連続実行するとエラー）
 # 	post_favorite("destroy") # いいね解除（連続実行するとエラー）
 # 	post_retweet("retweet") # リツイート実行（連続実行するとエラー）
@@ -209,4 +240,7 @@ def run():
 # 	post_direct_messages("new") #DM送信
 	
 ####################################################
+dir_path_output = "./output"
+if not os.path.exists(dir_path_output) : os.mkdir(dir_path_output) #get_search_resultで結果をファイル出力
+
 run()
