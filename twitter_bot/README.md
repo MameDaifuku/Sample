@@ -44,3 +44,6 @@ https://tadaken3.hatenablog.jp/entry/python-sent-dm
 
 TwitterのDM botをpollingベースで作ってみる（TwythonやめてRequestsでAPI直叩きにしてみた）  
 https://qiita.com/y_uehara1011/items/22c680ea0e0b13c7942b
+
+Pythonでtwitter APIからRT、リプライ、画像付きツイートを除外してツイートを取得したい  
+https://teratail.com/questions/256341
