@@ -62,7 +62,7 @@ def get_tachie_path(channel_id) :
 	else : return file_path_tachie_dummy
 ###
 
-def output_wordcloud_only_image(channel_id, origin_video_id) :
+def output_wordcloud_only_image1(channel_id, origin_video_id) :
 	# ワードクラウド作成
 	dir_path_output = "./output"
 	if not os.path.isdir(dir_path_output) : os.mkdir(dir_path_output)
@@ -124,6 +124,69 @@ def output_wordcloud_only_image(channel_id, origin_video_id) :
 	wc.to_file(file_path_wordcloud_only)
 ###
 
+def output_wordcloud_only_image2(origin_video_id) :
+	# ワードクラウド作成
+	dir_path_output = "./output"
+	if not os.path.isdir(dir_path_output) : os.mkdir(dir_path_output)
+	dir_path_video_id = f"{dir_path_output}/{origin_video_id}"
+	if not os.path.isdir(dir_path_video_id) : os.mkdir(dir_path_video_id)
+	
+	file_path_thumbnail_origin = f"./output/{origin_video_id}/{origin_video_id}_thumbnail_origin.jpg"
+	file_path_wordcloud_only = f"{dir_path_video_id}/{origin_video_id}_wordcloud_only2.jpg"
+	file_path_font = "/System/Library/Fonts/ヒラギノ明朝 ProN.ttc"
+	
+	cl = get_combined_list(origin_video_id, RENDERER_TYPE_NONE)
+
+	text_list = []
+	for element in cl : 
+		target = element["text"]
+		emoji_array = re.findall(r"[[a-zA-Z0-9_]+]", target)
+		for emoji in emoji_array : target = target.replace(emoji, "")
+		text_list.append(target)
+	###
+	mcb = MeCab.Tagger("mecabrc")
+	res = mcb.parseToNode("".join(text_list))
+	output = []
+	while res : 
+		if res.surface != "" :
+			word_type = res.feature.split(",")[0]
+			if word_type in ["形容詞", "動詞","名詞", "副詞"] : output.append(res.surface)
+		###
+		res = res.next
+		if res is None : break
+	###
+
+	stop_words = [ 'てる', 'いる', 'なる', 'れる', 'する', 'ある',  \
+		'こと', 'これ', 'さん', 'して', \
+		'くれる', 'やる', 'くださる', 'そう', 'せる', \
+		 'した',  '思う',  \
+		'それ', 'ここ', 'ちゃん', 'くん', '', \
+		'て','に','を','は','の', 'が', 'と', 'た', 'し', 'で', \
+		'ない', 'も', 'な', 'い', 'か', 'ので',  \
+		'よう', '', 'れ','さ','なっ', '草', '草草', 'こん', '待機',  \
+		'こんばんわ', 'こんばんは', "かわいい", "ww"
+		]
+
+	
+	img_thumbnail_origin = cv2.imread(file_path_thumbnail_origin)
+	height_thumbnail_origin, width_thumbnail_origin, channels_thumbnail_origin = img_thumbnail_origin.shape[:3]
+	wc = WordCloud( 
+		font_path=file_path_font, 
+		background_color="black", 
+		# background_color="white", 
+		# background_color="#c0c0c0", 
+		# background_color="#65ace4", 
+		width=width_thumbnail_origin, 
+		height=height_thumbnail_origin, 
+		collocations=False,
+		# colormap="prism",
+		colormap="Set2",
+		stopwords=set(stop_words) 
+		).generate(" ".join(output))
+	wc.to_file(file_path_wordcloud_only)
+###
+
+
 def output_wordcloud_combined_image1(channel_id, origin_video_id) :
 	# 立ち絵と立ち絵ワードクラウドを合成（透過合成）
 	file_path_tachie = get_tachie_path(channel_id)
@@ -169,6 +232,21 @@ def output_wordcloud_combined_image2(channel_id, origin_video_id) :
 	cv2.imwrite(file_path_wordcloud_combined, img_back)
 ###
 
+def output_wordcloud_combined_image3(origin_video_id) :
+	# 素のワードクラウドとサムネイルを合成（透過合成）
+	file_path_thumbnail_origin = f"./output/{origin_video_id}/{origin_video_id}_thumbnail_origin.jpg"
+	file_path_wordcloud_only2 = f"./output/{origin_video_id}/{origin_video_id}_wordcloud_only2.jpg"
+	file_path_wordcloud_combined3 = f"./output/{origin_video_id}/{origin_video_id}_wordcloud_combined3.jpg"
+
+	img_front = cv2.imread(file_path_wordcloud_only2)
+	img_back = cv2.imread(file_path_thumbnail_origin)
+
+	alpha = 0.2
+	img_wordcloud_combined = cv2.addWeighted(img_front, alpha, img_back, 1 - alpha, 0)
+	cv2.imwrite(file_path_wordcloud_combined3, img_wordcloud_combined)
+###
+
+
 def output_thumbnail_combined_image(origin_video_id, only_wordcloud=False) :
 	# 合成後ワードクラウドとサムネイルを合成
 	file_path_thumbnail_origin = f"./output/{origin_video_id}/{origin_video_id}_thumbnail_origin.jpg"
@@ -196,6 +274,8 @@ def download_origin_thumbnail(origin_video_id) :
 	file_path_thumbnail_origin = f"./output/{origin_video_id}/{origin_video_id}_thumbnail_origin.jpg"
 	if not os.path.isfile(file_path_thumbnail_origin) :
 		try :
+			print(url_thumbnail_origin)
+			print(file_path_thumbnail_origin)
 			urlretrieve(url_thumbnail_origin,"{0}".format(file_path_thumbnail_origin))
 		except Exception as e :
 			try :
@@ -212,11 +292,18 @@ def run():
 	channel_id = "UC0g1AE0DOjBYnLhkgoRWN1w"
 	video_id = "tM4I4_ZvYCE"
 	
+	dir_path_output = "./output"
+	if not os.path.isdir(dir_path_output) : os.makedirs(dir_path_output)
+	dir_path_video_id = f"{dir_path_output}/{video_id}"
+	if not os.path.isdir(dir_path_video_id) : os.makedirs(dir_path_video_id)
+	
 	download_origin_thumbnail(video_id) # 元動画のサムネイル取得
-	output_wordcloud_only_image(channel_id, video_id) # ワードクラウド作成
-	output_wordcloud_combined_image1(channel_id, video_id) # 立ち絵と立ち絵ワードクラウドを合成（透過合成）
-	output_wordcloud_combined_image2(channel_id, video_id) # 立ち絵と立ち絵ワードクラウドを合成（非透過合成）
-	output_thumbnail_combined_image(video_id) # 合成後ワードクラウドとサムネイルを合成
+# 	output_wordcloud_only_image1(channel_id, video_id) # ワードクラウド作成（立ち絵サイズ）
+	output_wordcloud_only_image2(video_id) # ワードクラウド作成（サムネイルサイズ）
+# 	output_wordcloud_combined_image1(channel_id, video_id) # 立ち絵と立ち絵ワードクラウドを合成（透過合成）
+# 	output_wordcloud_combined_image2(channel_id, video_id) # 立ち絵と立ち絵ワードクラウドを合成（非透過合成）
+	output_wordcloud_combined_image3(video_id) # 素のワードクラウドとサムネイルを合成（透過合成）
+# 	output_thumbnail_combined_image(video_id) # 合成後ワードクラウドとサムネイルを合成
 	
 ####################################################
 run()
