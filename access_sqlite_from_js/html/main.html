@@ -1,0 +1,55 @@
+<meta charset="utf8" />
+<head>
+	<title>たいとる</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.5.0/sql-wasm.js' ></script>
+	<script src='../js/main.js'></script>
+</head>
+<body>
+	<script>
+		$(function(){
+			init();
+		})
+	</script>
+
+	<!-- <b><span>見出し</span></b> -->
+	<table border=1 id="table1">
+		<!-- <thead>
+			<th>head1</th>
+			<th>head2</th>
+			<th>head3</th>
+		</thead> -->
+		<tbody>
+			<tr>
+				<td><input type="button" id="addRow" value="addRow" onclick="onClickAddRow();"></td>
+				<td><input type="button" id="showTable" value="showTable" onclick="onClickShowTable();"></td>
+				<!-- <td><input type="button" id="button3" value="button3"></td> -->
+			</tr>
+		</tbody>
+	</table>
+	<hr>
+	<table border=1 id="table2">
+		<thead>
+			<th>head1</th>
+			<th>head2</th>
+			<th>head3</th>
+		</thead>
+		<tbody>
+			<tr class="tr1">
+				<td class="td1">val11</td>
+				<td class="td2">val12</td>
+				<td class="td3">val13</td>
+			</tr>
+			<tr class="tr2">
+				<td class="td1">val21</td>
+				<td class="td2">val22</td>
+				<td class="td3">val23</td>
+			</tr>
+			<tr class="tr3">
+				<td class="td1">val31</td>
+				<td class="td2">val32</td>
+				<td class="td3">val33</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
