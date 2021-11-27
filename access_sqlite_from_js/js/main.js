@@ -89,3 +89,45 @@ function convertIndexToColId(columns, rowOrigin) {
 
 	return result;
 }
+
+function onClickSelectVideoChatCount() {
+	let selectedChannelId = $("#channelList").val();
+	
+	if (selectedChannelId.match(/見出し/)) {
+		alert("チャンネルを選択してください。");
+		return;
+	}
+
+	let query = "";
+	query += "SELECT ";
+	query += "	C.CHANNEL_ID ";
+	query += "	,C.CHANNEL_TITLE ";
+	query += "	,C.CHANNEL_CATEGORY1 ";
+	query += "	,C.CHANNEL_CATEGORY2 ";
+	query += "	,C.CHANNEL_CATEGORY3 ";
+	query += "FROM ";
+	query += "	CHANNEL C ";
+	query += "WHERE ";
+	query += "	C.CHANNEL_ID = $channelId ";
+	// query += "	C.CHANNEL_ID = ? ";
+	query += "ORDER BY ";
+	query += "	C.CHANNEL_CATEGORY1 ASC ";
+	query += "	,C.CHANNEL_CATEGORY2 DESC ";
+	query += "	,C.CHANNEL_CATEGORY3 ASC ";
+	query += "	,C.CHANNEL_ID ASC ";
+	console.log(query);
+
+	let stmt = db.prepare(query);
+	
+	// 成功パターン1
+	// x = stmt.getAsObject({$channelId:selectedChannelId})
+	// console.log(x);
+	// console.log(stmt);
+
+	// 成功パターン2
+	stmt.bind({$channelId:selectedChannelId});
+	while(stmt.step()) {
+		row = stmt.getAsObject();
+		console.log(row);
+	}
+}
